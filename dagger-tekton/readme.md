@@ -24,10 +24,8 @@
       dagger call test --dir .
 ```
 14. In `git-pipeline-run.yaml`, use `https://github.com/kpenfound/greetings-api` for the repo url
-15. watch the output with `tkn pipelinerun logs clone-read-run-<id> -f`
-16. Notice output difference with `[dagger : read]` vs `[dagger : sidecar-dagger-engine]`. The latter is the engine logs
 
-## Visualize and debug the pipeline runs in Dagger Cloud
+### Add Dagger Cloud token for visualizing and debugging pipeline runs
 To use k8s secrets for dagger cloud:
 1. Run `kubectl create secret generic dagger-cloud --from-literal=token='YOUR_TOKEN'`
 2. See the secret information: `kubectl describe secrets dagger-cloud`
@@ -41,17 +39,26 @@ Type:  Opaque
 
 Data
 ====
-token:  36 bytes```
+token:  36 bytes
+```
 
 1. Change dagger-task.yaml to pull from a secret instead of string in the env section:
 
-     ```- name: DAGGER_CLOUD_TOKEN
+   ```- name: DAGGER_CLOUD_TOKEN
         valueFrom:
           secretKeyRef:
             name: $(params.dagger-cloud-token)
-            key: "token"```
+            key: "token"
+   ```
 
 1. Change git-pipeline-run.yaml param to reference the secret name instead of the token itself:
 
-  ```- name: dagger-cloud-token
-    value: "dagger-cloud"```
+   ```- name: dagger-cloud-token
+    value: "dagger-cloud"
+   ```
+
+### Run the pipeline and visualize the output in Dagger Cloud
+1. Start the pipeline with `kubectl create -f git-pipeline-run.yaml`. This writes out the pipeline run with its ID in the terminal. You'll use the ID to watch the output (next step).
+2. Watch the output with `tkn pipelinerun logs clone-read-run-<id> -f`
+3. Notice output difference with `[dagger : read]` vs `[dagger : sidecar-dagger-engine]`. The latter is the Dagger engine logs
+4. Go to https://dagger.cloud to view the pipeline running in realtime (streaming logs)
