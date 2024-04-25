@@ -21,4 +21,4 @@ spec:
   - name: repo-url
     value: https://github.com/kpenfound/greetings-api
   - name: dagger-cloud-token
-    value: YOUR_DAGGER_CLOUD_TOKEN
+    value: "dagger-cloud"
